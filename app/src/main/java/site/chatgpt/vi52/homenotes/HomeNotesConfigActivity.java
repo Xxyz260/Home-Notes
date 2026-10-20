@@ -132,6 +132,7 @@ public class HomeNotesConfigActivity extends Activity {
 		content.addView(buttons, matchWrap());
 
 		ScrollView scroll = new ScrollView(this);
+		scroll.setFitsSystemWindows(true);
 		scroll.addView(content);
 		return scroll;
 	}
