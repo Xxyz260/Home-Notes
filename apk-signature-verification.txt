@@ -1,0 +1,18 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): false
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v3.2 scheme (APK Signature Scheme v3.2): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+V3.0 Signer: certificate DN: CN=Home Notes Release, OU=Android
+V3.0 Signer: certificate SHA-256 digest: 9f7d2423e080a8c1ef9689c54feae98aa6c720e442bbe327651dd7b6ddc39340
+V3.0 Signer: certificate SHA-1 digest: de44746a321d14ab2523249f1bd95724ccf0156f
+V3.0 Signer: certificate MD5 digest: 8b2bfe800eee6628f9b20a8a7d22f4ac
+V3.0 Signer: key algorithm: RSA
+V3.0 Signer: key size (bits): 4096
+V3.0 Signer: public key SHA-256 digest: 04ae23ee6803326bb4f9c7dbf222b3eabe01386817bc09f9efa28ff4d7d73a56
+V3.0 Signer: public key SHA-1 digest: 28714adb281debfe042fdfb7ec762da8964b2019
+V3.0 Signer: public key MD5 digest: e41d1659f3096ff0db5d96cf009afe87
