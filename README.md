@@ -31,3 +31,27 @@ gradle assembleDebug
 The debug APK will be written under `app/build/outputs/apk/debug/`.
 
 There are no external libraries or frameworks.
+
+## Release signing
+
+Release builds use a private PKCS12 keystore and a local `signing.properties` file
+in the project root. Both are excluded from Git. Copy the supplied private
+`signing.properties` into the project root and update `storeFile` to the absolute
+path of your keystore when moving to another machine. It contains `storeFile`,
+`storePassword`, `keyAlias`, and `keyPassword`.
+
+```sh
+gradle assembleRelease
+```
+
+The signed APK is written to `app/build/outputs/apk/release/app-release.apk`.
+Release builds fail signing validation if the local signing file is absent;
+debug builds do not require it. `gradle bundleRelease` uses the same key for an
+Android App Bundle.
+
+Keep a secure backup of the keystore and store its passwords separately. Reuse
+this signing identity for future directly distributed updates. If publishing
+with Google Play App Signing, follow Play Console's enrollment instructions:
+this key can serve as the upload key, while Play manages the app signing key.
+An existing published app must use its established signing identity or an
+approved key migration.
