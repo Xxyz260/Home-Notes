@@ -1,0 +1,91 @@
+name: Publish Home Notes v1.0 debug APK
+
+on:
+  push:
+    branches: [release/v1.0-debug]
+    paths: [.github/workflows/release-v1-debug.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-v1-debug
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out v1.0 source
+        uses: actions/checkout@v4
+        with:
+          ref: 2e247dec4be950ce200739ce9ee50987d140f91c
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 37 tools
+        run: sdkmanager "platforms;android-37" "build-tools;37.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+
+      - name: Build debug APK and run checks
+        run: gradle --no-daemon --console=plain :app:assembleDebug :app:check
+
+      - name: Verify and package APK
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp app/build/outputs/apk/debug/app-debug.apk release/Home-Notes-v1.0-debug.apk
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose release/Home-Notes-v1.0-debug.apk
+          "$ANDROID_HOME/build-tools/37.0.0/zipalign" -c 4 release/Home-Notes-v1.0-debug.apk
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import xml.etree.ElementTree as ET
+
+          apk = Path("release/Home-Notes-v1.0-debug.apk")
+          digest = hashlib.sha256(apk.read_bytes()).hexdigest()
+          issues = ET.parse("app/build/reports/lint-results-debug.xml").getroot().findall("issue")
+          warnings = sum(i.attrib.get("severity") == "Warning" for i in issues)
+          errors = sum(i.attrib.get("severity") in ("Error", "Fatal") for i in issues)
+          notes = """Home Notes v1.0 provides a home-screen widget with an independent note and appearance settings for each instance.
+
+          ### Download
+
+          **Home-Notes-v1.0-debug.apk** is installable and signed with the GitHub Actions runner's Android debug key. This is a debuggable build for sideloading and testing.
+
+          Requires Android 10 (API 29) or later. Allow installation from your download source, install the APK, then add **Home Notes** through your launcher's widget picker. The app has no launcher icon. Tap a widget to edit its note, font, text size, colors, and opacity.
+
+          ### Validation
+
+          - Built from commit `2e247dec4be950ce200739ce9ee50987d140f91c`.
+          - Gradle debug build and checks passed.
+          - APK signature and ZIP alignment verified.
+          - No unit tests are present; device behavior has not been tested.
+          """
+          notes += f"- Android lint: {errors} errors, {warnings} warnings.\n"
+          notes += f"\nSHA-256 (`Home-Notes-v1.0-debug.apk`):\n```\n{digest}\n```\n"
+          Path("release/notes.md").write_text(notes)
+          PY
+
+      - name: Publish v1.0 with debug APK only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: Xxyz260/Home-Notes
+        run: |
+          gh release create v1.0 release/Home-Notes-v1.0-debug.apk \
+            --target 2e247dec4be950ce200739ce9ee50987d140f91c \
+            --title "Home Notes v1.0 (debug APK)" \
+            --notes-file release/notes.md
