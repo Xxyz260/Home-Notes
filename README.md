@@ -1,4 +1,4 @@
-# Home Notes v1.1
+# Home Notes v1.2
 
 Package: `site.chatgpt.vi52.homenotes`
 
