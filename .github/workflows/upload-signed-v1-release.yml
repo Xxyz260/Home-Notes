@@ -1,0 +1,33 @@
+name: Upload signed Home Notes v1.0 release
+
+on:
+  push:
+    branches: [release/v1.0-signed]
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify release file checksums
+        working-directory: release-assets
+        run: sha256sum --check SHA256SUMS
+      - name: Upload verified public release files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release upload v1.0-release \
+            release-assets/Home-Notes-v1.0-release.apk \
+            release-assets/home-notes-release-certificate.pem \
+            release-assets/home-notes-release-certificate.txt \
+            release-assets/SHA256SUMS \
+            release-assets/apk-signature-verification.txt
