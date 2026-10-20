@@ -138,20 +138,21 @@ public class HomeNotesConfigActivity extends Activity {
 
 	private void loadValues() {
 		SharedPreferences prefs = WidgetPrefs.get(this);
+		int settingsId = WidgetPrefs.settingsSource(prefs, appWidgetId);
 		noteField.setText(prefs.getString(
 			WidgetPrefs.key(appWidgetId, "text"),
 			getString(R.string.default_note)
 		));
 
 		int size = prefs.getInt(
-			WidgetPrefs.key(appWidgetId, "size"),
+			WidgetPrefs.key(settingsId, "size"),
 			WidgetPrefs.DEFAULT_TEXT_SIZE
 		);
 		sizeSeek.setProgress(Math.max(0, Math.min(88, size - 8)));
 		updateSizeLabel(size);
 
 		String fontKey = prefs.getString(
-			WidgetPrefs.key(appWidgetId, "font"),
+			WidgetPrefs.key(settingsId, "font"),
 			FontCatalog.DEFAULT_KEY
 		);
 		int fontIndex = 0;
@@ -164,29 +165,29 @@ public class HomeNotesConfigActivity extends Activity {
 		fontSpinner.setSelection(fontIndex);
 
 		textColorField.setText(prefs.getString(
-			WidgetPrefs.key(appWidgetId, "text_color"),
-			WidgetPrefs.DEFAULT_TEXT_COLOR
+			WidgetPrefs.key(settingsId, "text_color"),
+			WidgetPrefs.defaultTextColor(this)
 		));
 		setOpacity(
 			textOpacitySeek,
 			textOpacityLabel,
 			"Text opacity",
 			prefs.getInt(
-				WidgetPrefs.key(appWidgetId, "text_opacity"),
+				WidgetPrefs.key(settingsId, "text_opacity"),
 				WidgetPrefs.DEFAULT_TEXT_OPACITY
 			)
 		);
 
 		backgroundColorField.setText(prefs.getString(
-			WidgetPrefs.key(appWidgetId, "background_color"),
-			WidgetPrefs.DEFAULT_BACKGROUND_COLOR
+			WidgetPrefs.key(settingsId, "background_color"),
+			WidgetPrefs.defaultBackgroundColor(this)
 		));
 		setOpacity(
 			backgroundOpacitySeek,
 			backgroundOpacityLabel,
 			"Background opacity",
 			prefs.getInt(
-				WidgetPrefs.key(appWidgetId, "background_opacity"),
+				WidgetPrefs.key(settingsId, "background_opacity"),
 				WidgetPrefs.DEFAULT_BACKGROUND_OPACITY
 			)
 		);
@@ -201,15 +202,18 @@ public class HomeNotesConfigActivity extends Activity {
 		}
 
 		FontCatalog.Entry font = fonts.get(fontSpinner.getSelectedItemPosition());
-		WidgetPrefs.get(this).edit()
-			.putString(WidgetPrefs.key(appWidgetId, "text"), noteField.getText().toString())
-			.putInt(WidgetPrefs.key(appWidgetId, "size"), sizeSeek.getProgress() + 8)
-			.putString(WidgetPrefs.key(appWidgetId, "font"), font.key)
-			.putString(WidgetPrefs.key(appWidgetId, "text_color"), textColor)
-			.putInt(WidgetPrefs.key(appWidgetId, "text_opacity"), textOpacitySeek.getProgress())
-			.putString(WidgetPrefs.key(appWidgetId, "background_color"), backgroundColor)
-			.putInt(WidgetPrefs.key(appWidgetId, "background_opacity"), backgroundOpacitySeek.getProgress())
-			.apply();
+		SharedPreferences.Editor editor = WidgetPrefs.get(this).edit()
+			.putString(WidgetPrefs.key(appWidgetId, "text"), noteField.getText().toString());
+		for (int settingsId : new int[] { appWidgetId, WidgetPrefs.LATEST_SETTINGS_ID }) {
+			editor
+				.putInt(WidgetPrefs.key(settingsId, "size"), sizeSeek.getProgress() + 8)
+				.putString(WidgetPrefs.key(settingsId, "font"), font.key)
+				.putString(WidgetPrefs.key(settingsId, "text_color"), textColor)
+				.putInt(WidgetPrefs.key(settingsId, "text_opacity"), textOpacitySeek.getProgress())
+				.putString(WidgetPrefs.key(settingsId, "background_color"), backgroundColor)
+				.putInt(WidgetPrefs.key(settingsId, "background_opacity"), backgroundOpacitySeek.getProgress());
+		}
+		editor.apply();
 
 		HomeNotesWidget.update(
 			this,

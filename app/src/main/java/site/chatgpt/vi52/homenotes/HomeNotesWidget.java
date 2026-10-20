@@ -44,7 +44,7 @@ public class HomeNotesWidget extends AppWidgetProvider {
 		);
 		String textColor = prefs.getString(
 			WidgetPrefs.key(appWidgetId, "text_color"),
-			WidgetPrefs.DEFAULT_TEXT_COLOR
+			WidgetPrefs.defaultTextColor(context)
 		);
 		int textOpacity = prefs.getInt(
 			WidgetPrefs.key(appWidgetId, "text_opacity"),
@@ -52,7 +52,7 @@ public class HomeNotesWidget extends AppWidgetProvider {
 		);
 		String backgroundColor = prefs.getString(
 			WidgetPrefs.key(appWidgetId, "background_color"),
-			WidgetPrefs.DEFAULT_BACKGROUND_COLOR
+			WidgetPrefs.defaultBackgroundColor(context)
 		);
 		int backgroundOpacity = prefs.getInt(
 			WidgetPrefs.key(appWidgetId, "background_opacity"),

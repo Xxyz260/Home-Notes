@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 
+import java.util.Locale;
+
 final class WidgetPrefs {
-	static final String DEFAULT_TEXT_COLOR = "000000";
-	static final String DEFAULT_BACKGROUND_COLOR = "FFFFFF";
 	static final int DEFAULT_TEXT_OPACITY = 100;
-	static final int DEFAULT_BACKGROUND_OPACITY = 80;
-	static final int DEFAULT_TEXT_SIZE = 18;
+	static final int DEFAULT_BACKGROUND_OPACITY = 100;
+	static final int DEFAULT_TEXT_SIZE = 24;
+	// Snapshot independent of widget lifetime; Android widget IDs are nonnegative.
+	static final int LATEST_SETTINGS_ID = -1;
 
 	private WidgetPrefs() {}
 
@@ -19,6 +21,22 @@ final class WidgetPrefs {
 
 	static String key(int widgetId, String name) {
 		return widgetId + ":" + name;
+	}
+
+	static int settingsSource(SharedPreferences prefs, int widgetId) {
+		return prefs.contains(key(widgetId, "text")) ? widgetId : LATEST_SETTINGS_ID;
+	}
+
+	static String defaultTextColor(Context context) {
+		return rgb(context.getColor(R.color.widget_text));
+	}
+
+	static String defaultBackgroundColor(Context context) {
+		return rgb(context.getColor(R.color.widget_background));
+	}
+
+	private static String rgb(int color) {
+		return String.format(Locale.ROOT, "%06X", color & 0xFFFFFF);
 	}
 
 	static int color(String rgb, int opacityPercent) {

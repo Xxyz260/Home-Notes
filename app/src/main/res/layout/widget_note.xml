@@ -3,8 +3,9 @@
 	android:id="@+id/note_text"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="@color/widget_background"
 	android:gravity="top|start"
 	android:padding="12dp"
 	android:text="@string/default_note"
-	android:textColor="#FF000000"
-	android:textSize="18sp" />
+	android:textColor="@color/widget_text"
+	android:textSize="24sp" />

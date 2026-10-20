@@ -10,6 +10,8 @@ A deliberately small Android home-screen widget that displays one freeform note 
 - Long-pressing the widget and choosing the launcher's standard reconfigure action opens the same activity on Android 12+.
 - Tapping the widget also opens that editor, because `RemoteViews` supports `TextView` but not an editable `EditText`.
 - Each widget instance stores its own note, text size, system font, text RGB/opacity, and background RGB/opacity.
+- Fresh defaults are 24 sp text and 100% text/background opacity, with black text on white in light mode and white text on black in dark mode.
+- New widgets start with the appearance settings from the most recently saved widget, even if that widget has since been deleted. Note text starts fresh. Saving or canceling one widget does not change other widgets; only saving updates the defaults for future widgets.
 - Fonts are enumerated from Android's installed system fonts at runtime. No font is bundled.
 - The app has no launcher activity and no network permission.
 - The app icon is a transparent Android vector drawable containing a conventional serif capital T.
