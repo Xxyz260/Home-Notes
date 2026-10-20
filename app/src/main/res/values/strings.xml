@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Home Notes</string>
+	<string name="widget_description">A freely configurable text note for the home screen.</string>
+	<string name="default_note">Tap to edit</string>
+</resources>
